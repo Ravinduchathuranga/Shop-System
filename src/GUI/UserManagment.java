@@ -4,17 +4,46 @@
  */
 package GUI;
 
+import Modal.MySQL;
+import java.sql.ResultSet;
+import java.util.Vector;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author ravinduchathuranga
  */
 public class UserManagment extends javax.swing.JPanel {
 
-    /**
-     * Creates new form UserManagment
-     */
+    
     public UserManagment() {
         initComponents();
+        loadUsers();
+    }
+    
+    private void loadUsers() {
+        try {
+            DefaultTableModel modal = (DefaultTableModel) jTable1.getModel();
+            modal.setRowCount(0);
+            
+            ResultSet resultSet = MySQL.search("SELECT * FROM `user` INNER JOIN `user_type` ON `user`.`user_type_id`=`user_type`.`id`"
+                    + " INNER JOIN `user_status` ON `user`.`user_status_id`=`user_status`.`id`");
+            while (resultSet.next()) {
+                Vector v = new Vector();
+                v.add(resultSet.getString("id"));
+                v.add(resultSet.getString("fname"));
+                v.add(resultSet.getString("lname"));
+                v.add(resultSet.getString("mobile"));
+                v.add(resultSet.getString("username"));
+                v.add(resultSet.getString("type"));
+                v.add(resultSet.getString("status"));
+                modal.addRow(v);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
     }
 
     /**
